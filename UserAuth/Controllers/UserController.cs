@@ -8,6 +8,7 @@ using Models;
 using System.Security.Claims;
 using UserAuth.Utility;
 using Utility;
+using UserAuth.Models;
 
 namespace UserAuth.Controllers
 {
@@ -24,19 +25,22 @@ namespace UserAuth.Controllers
             _configuration = configuration;
 
         }
-
+        [Route("User/Signup")]
+        [Route("User")]
         public IActionResult Index()
         {
-            return View();
+            return View("Signup");
         }
 
 
         [HttpPost]
-        public IActionResult Index([FromBody] UserDto newUser)
+        [Route("User/Signup")]
+        [Route("User")]
+        public IActionResult Index([FromForm] UserSignupDto newUser)
         {
             if (!ModelState.IsValid)
             {
-                return View(newUser);
+                return View("Signup", newUser);
             }
 
             User user = new User
@@ -52,7 +56,7 @@ namespace UserAuth.Controllers
             if (id == 0)
             {
                 ModelState.AddModelError("", "User creation failed. Something catastrophically went wrong!");
-                return View(newUser);
+                return View("Signup", newUser);
             }
 
             return RedirectToAction("Login");
@@ -62,7 +66,7 @@ namespace UserAuth.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Account", "User");
             }
             return View();
         }
@@ -95,7 +99,7 @@ namespace UserAuth.Controllers
                 {
                     new Claim(ClaimTypes.Name, existingUser.Name),
                     new Claim(ClaimTypes.Email, existingUser.Email),
-                    new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
                 }, CookieAuthenticationDefaults.AuthenticationScheme);
 
             var authProperties = new AuthenticationProperties
@@ -107,7 +111,7 @@ namespace UserAuth.Controllers
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties).Wait();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Account", "User");
 
         }
 
@@ -124,17 +128,29 @@ namespace UserAuth.Controllers
             return Redirect("/");
         }
 
+        [Authorize]
+        public IActionResult Account()
+        {
+            long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
+            Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
+            condition["Id"] = userId;
 
+            User? existingUser = _userRepository.Get(condition, includeProperties: "true");
+            if (existingUser == null)
+            {
 
-
-
-
-
-
-
-
-
-
+                return Redirect("/Home/Error");
+            }
+            var accountViewModel = new AccountViewModel
+            {
+                Id = existingUser.Id,
+                Name = existingUser.Name,
+                Email = existingUser.Email,
+                CreatedAt = existingUser.CreatedAt,
+                ModifiedAt = existingUser.ModifiedAt,
+            };
+            return View(accountViewModel);
+        }
 
     }
 }

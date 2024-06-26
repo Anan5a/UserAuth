@@ -1,2 +1,33 @@
 ﻿@{
+    ViewData["Title"] = "Dashboard";
 }
+@model AccountViewModel
+
+
+<h2>Welcome, <b>@Model.Name</b></h2>
+<p>Here is your account information</p>
+
+<div class="col-lg-6 col-md-8 col-sm-12 col-xs-12 mx-auto">
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <tbody>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row">Email</th>
+                    <td>@Model.Email</td>
+                </tr>
+                <tr>
+                    <th scope="row">Member since</th>
+                    <td>@Model.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Last Modifications</th>
+                    <td>@Model.ModifiedAt?.ToString("yyyy-MM-dd hh:mm tt")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

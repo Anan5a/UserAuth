@@ -1,16 +1,21 @@
 ﻿@{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register new account";
 }
-@model UserLoginDto
+@model UserSignupDto
 
 
 <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12 mx-auto">
     <div class="card">
-        <h5 class="card-header text-center">Login</h5>
+        <h5 class="card-header text-center">Register new account</h5>
         <div class="card-body">
-            <form asp-controller="User" asp-action="Login" method="post">
+            <form asp-controller="User" asp-action="Index" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input type="text" class="form-control" asp-for="Name">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label"></label>
                     <input type="text" class="form-control" asp-for="Email">
@@ -22,13 +27,13 @@
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="submit" class="btn btn-primary">Signup</button>
                 </div>
-
+            
             </form>
-
-
-
+            
+            
+            
         </div>
     </div>
 </div>
