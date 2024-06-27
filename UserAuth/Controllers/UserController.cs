@@ -25,6 +25,7 @@ namespace UserAuth.Controllers
             _configuration = configuration;
 
         }
+
         [Route("User/Signup")]
         [Route("User")]
         public IActionResult Index()
@@ -42,6 +43,8 @@ namespace UserAuth.Controllers
             {
                 return View("Signup", newUser);
             }
+
+
 
             User user = new User
             {

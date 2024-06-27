@@ -1,0 +1,14 @@
+﻿using BE;
+
+namespace IRepository
+{
+    public interface IUserRepository : IRepository<User>
+    {
+        new int Add(User user);
+        new IEnumerable<User> GetAll(Dictionary<string, dynamic>? condition, string? includeProperties = null);
+        new User? Get(Dictionary<string, dynamic> condition, string? includeProperties);
+        new User? Update(User user);
+        int Remove(int id);
+        int RemoveRange(List<int> Ids);
+    }
+}
