@@ -1,7 +1,12 @@
+using API.Middleware;
+using DataAccess;
+using IRepository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
@@ -19,6 +24,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseMiddleware<ValidateRequestTokenMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

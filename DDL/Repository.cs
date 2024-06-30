@@ -1,4 +1,4 @@
-﻿using DataAccess.IRepository;
+﻿using IRepository;
 using Microsoft.Data.SqlClient;
 
 
@@ -6,18 +6,13 @@ namespace DataAccess
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        public IMyDbConnection dbConnection { get; set; }
-
-        public Repository(IMyDbConnection dbConnection)
-        {
-            this.dbConnection = dbConnection;
-        }
-
-        public int Remove(string TableName, string ColumnName, int Id)
+        
+        
+        public int Remove(string connectionString, string TableName, string ColumnName, int Id)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
                     string sql = $"DELETE FROM {TableName} WHERE {ColumnName} = @Id";
@@ -38,11 +33,11 @@ namespace DataAccess
 
         }
 
-        public int RemoveRange(string TableName, string ColumnName, List<int> Ids)
+        public int RemoveRange(string connectionString, string TableName, string ColumnName, List<int> Ids)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
                     string sql = $"DELETE FROM {TableName} WHERE {ColumnName} IN ({string.Join(",", Ids)})";
@@ -61,22 +56,22 @@ namespace DataAccess
             }
         }
 
-        public int Add(T entity)
+        public int Add(string connectionString, T entity)
         {
             throw new NotImplementedException("Must implement specific logic in the repository");
         }
 
-        public IEnumerable<T> GetAll(Dictionary<string, dynamic>? condition = null, string ? includeProperties = null)
+        public IEnumerable<T> GetAll(string connectionString, Dictionary<string, dynamic>? condition = null, string ? includeProperties = null)
         {
             throw new NotImplementedException("Must implement specific logic in the repository");
         }
 
-        public T? Get(Dictionary<string, dynamic> condition, string? includeProperties)
+        public T? Get(string connectionString, Dictionary<string, dynamic> condition, string? includeProperties)
         {
             throw new NotImplementedException("Must implement specific logic in the repository");
         }
 
-        public T Update(T entity)
+        public T Update(string connectionString, T entity)
         {
             throw new NotImplementedException("Must implement specific logic in the repository");
         }

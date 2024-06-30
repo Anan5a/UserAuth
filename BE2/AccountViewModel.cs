@@ -1,5 +1,4 @@
-﻿
-namespace BE
+﻿namespace BE
 {
     public class AccountViewModel
     {

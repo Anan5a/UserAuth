@@ -1,6 +1,3 @@
-
-using DataAccess;
-using DataAccess.IRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using UserAuth.Utility;
 
@@ -9,15 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IMyDbConnection>(provider =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new MyDbConnection(connectionString);
-});
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddSingleton<PasswordManager>();
+builder.Services.AddSingleton<HttpClientHelper>();
 
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

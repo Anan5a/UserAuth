@@ -1,68 +1,61 @@
-﻿using DataAccess.IRepository;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.DTOs;
-using Models;
 using System.Security.Claims;
+using BE.DTOs;
+using BE;
 using UserAuth.Utility;
-using Utility;
-using UserAuth.Models;
+using Microsoft.SqlServer.Server;
 
 namespace UserAuth.Controllers
 {
     public class UserController : Controller
     {
-        private readonly PasswordManager _passwordManager;
-        private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        private readonly HttpClientHelper _httpClientHelper;
+        private readonly string _apiUrl;
 
-        public UserController(IUserRepository userRepository, PasswordManager passwordManager, IConfiguration configuration)
+        public UserController(IConfiguration configuration, HttpClientHelper httpClientHelper)
         {
-            _passwordManager = passwordManager;
-            _userRepository = userRepository;
             _configuration = configuration;
-
+            _httpClientHelper = httpClientHelper;
+            _apiUrl = ConfigHelper.GetApiUrl(_configuration);
         }
 
-        [Route("User/Signup")]
-        [Route("User")]
-        public IActionResult Index()
+        public IActionResult Signup()
         {
-            return View("Signup");
+            return View();
         }
 
 
         [HttpPost]
-        [Route("User/Signup")]
-        [Route("User")]
-        public IActionResult Index([FromForm] UserSignupDto newUser)
+        public async Task<IActionResult> Signup([FromForm] UserSignupDto newUser)
         {
             if (!ModelState.IsValid)
             {
                 return View("Signup", newUser);
             }
+            //log
+            //call api
+            Dictionary<string, string> form = new Dictionary<string, string>();
+            form["Email"] = newUser.Email;
+            form["Name"] = newUser.Name;
+            form["Password"] = newUser.Password;
 
+            ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Signup", form);
 
-
-            User user = new User
+            if (result.Code == 200)
             {
-                Name = newUser.Name,
-                Email = newUser.Email,
-                Password = _passwordManager.HashPassword(newUser.Password),
-                CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now,
-            };
-            int id = _userRepository.Add(user);
-
-            if (id == 0)
-            {
-                ModelState.AddModelError("", "User creation failed. Something catastrophically went wrong!");
-                return View("Signup", newUser);
+                //signup ok, show user success page,
+                ViewBag.SignupOk = true;
+                return View();
             }
 
-            return RedirectToAction("Login");
+
+            ModelState.AddModelError("", "User creation failed. Something catastrophically went wrong!");
+            return View("Signup", newUser);
+
         }
 
         public IActionResult Login()
@@ -75,28 +68,32 @@ namespace UserAuth.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login([FromForm] UserLoginDto loginDto)
+        public async Task<IActionResult> Login([FromForm] UserLoginDto loginDto)
         {
             if (!ModelState.IsValid)
             {
                 return View(loginDto);
             }
+            //log
+            //call api
+            Dictionary<string, string> form = new Dictionary<string, string>();
+            form["Email"] = loginDto.Email;
+            form["Password"] = loginDto.Password;
 
-            Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
-            condition["Email"] = loginDto.Email;
 
-            User? existingUser = _userRepository.Get(condition, includeProperties: "true");
-            if (existingUser == null)
+
+            ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Login", form);
+
+            if (result.Code != 200)
             {
-                ModelState.AddModelError("", "No user was found");
+                //signup ok, show user success page,
+                ModelState.AddModelError("", result.Message);
                 return View(loginDto);
             }
-            if (!_passwordManager.VerifyPassword(loginDto.Password, existingUser.Password))
-            {
-                ModelState.AddModelError("", "Authentication failed. Invalid username or password");
-                return View(loginDto);
-            }
+
+
             //valid user, login using cookie
+            User existingUser = result.User;
 
             var claimsIdentity = new ClaimsIdentity(new Claim[]
                 {
@@ -132,18 +129,19 @@ namespace UserAuth.Controllers
         }
 
         [Authorize]
-        public IActionResult Account()
+        public async Task<IActionResult> Account()
         {
             long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
-            Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
-            condition["Id"] = userId;
+            //log
+            //call api
+            ApiResponseDto result = await _httpClientHelper.GetAsync<ApiResponseDto>(_apiUrl + $"/api/Account/{userId}");
 
-            User? existingUser = _userRepository.Get(condition, includeProperties: "true");
-            if (existingUser == null)
+            if (result.Code != 200)
             {
-
+                //signup ok, show user success page,
                 return Redirect("/Home/Error");
             }
+            User existingUser = result.User;
             var accountViewModel = new AccountViewModel
             {
                 Id = existingUser.Id,

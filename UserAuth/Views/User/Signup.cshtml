@@ -8,28 +8,41 @@
     <div class="card">
         <h5 class="card-header text-center">Register new account</h5>
         <div class="card-body">
-            <form asp-controller="User" asp-action="Index" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag?.SignupOk != null)
+            {
+                <div class="container text-center mt-5">
+                    <h4>Your account was created successfully. You can login now.</h4>
+                        <a asp-action="Login" asp-controller="User" class="btn btn-success btn-lg">Login</a>
+                </div>
+            }
+            else
+            {
+                <form asp-controller="User" asp-action="Signup" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input type="text" class="form-control" asp-for="Name">
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input type="text" class="form-control" asp-for="Email">
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input type="password" class="form-control" asp-for="Password">
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Signup</button>
-                </div>
-            </form>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="Email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input type="password" class="form-control" asp-for="Password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Signup</button>
+                    </div>
+                </form>
+            }
         </div>
     </div>
 </div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

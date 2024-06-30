@@ -1,6 +1,6 @@
+using BE;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using UserAuth.Models;
 
 namespace UserAuth.Controllers
 {

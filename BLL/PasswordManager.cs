@@ -2,15 +2,15 @@
 {
     using BCrypt.Net;
 
-    public class PasswordManager
+    public static class PasswordManager
     {
-        private readonly int cost = 12;
-        public string HashPassword(string password)
+        private static readonly int cost = 12;
+        public static string HashPassword(string password)
         {
             return BCrypt.HashPassword(password, workFactor: cost);
         }
 
-        public bool VerifyPassword(string password, string hashedPassword)
+        public static bool VerifyPassword(string password, string hashedPassword)
         {
             return BCrypt.Verify(password, hashedPassword);
         }

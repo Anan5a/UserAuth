@@ -1,4 +1,4 @@
-﻿using DataAccess.IRepository;
+﻿using IRepository;
 using Microsoft.Data.SqlClient;
 using BE;
 using System.Data;
@@ -10,24 +10,21 @@ namespace DataAccess
     {
         private readonly string tableName = "Users";
 
-        public UserRepository(IMyDbConnection dbConnection) : base(dbConnection)
-        {
-        }
 
-        public int Remove(int Id)
+        public int Remove(string connectionString, int Id)
         {
-            return base.Remove(tableName, "Id", Id);
+            return base.Remove(connectionString, tableName, "Id", Id);
         }
-        public int RemoveRange(List<int> Ids)
+        public int RemoveRange(string connectionString, List<int> Ids)
         {
-            return base.RemoveRange(tableName, "Id", Ids);
+            return base.RemoveRange(connectionString, tableName, "Id", Ids);
         }
-        public new int Add(User user)
+        public new int Add(string connectionString, User user)
         {
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
                     string sql = $"INSERT INTO [{tableName}] ([Name], [Email], [Password], [CreatedAt], [ModifiedAt]) VALUES (@Name, @Email, @Password, @CreatedAt, @ModifiedAt); SELECT SCOPE_IDENTITY();";
@@ -54,10 +51,10 @@ namespace DataAccess
 
         }
 
-        public new IEnumerable<User> GetAll(Dictionary<string, dynamic>? condition = null, string? includeProperties = "true")
+        public new IEnumerable<User> GetAll(string connectionString, Dictionary<string, dynamic>? condition = null, string? includeProperties = "true")
         {
             List<User> users = new List<User>();
-            using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
@@ -117,10 +114,10 @@ namespace DataAccess
             return users;
         }
 
-        public new User? Get(Dictionary<string, dynamic> condition, string? includeProperties)
+        public new User? Get(string connectionString, Dictionary<string, dynamic> condition, string? includeProperties)
         {
             User? user = null;
-            using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
@@ -171,9 +168,9 @@ namespace DataAccess
             return user;
         }
 
-        public new User? Update(User existingUser)
+        public new User? Update(string connectionString, User existingUser)
         {
-            using (SqlConnection connection = new SqlConnection(dbConnection.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
