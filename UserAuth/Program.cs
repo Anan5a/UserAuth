@@ -23,8 +23,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Home/Error";
     });
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +41,7 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

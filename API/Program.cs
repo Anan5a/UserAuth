@@ -1,6 +1,6 @@
 using API.Middleware;
-using DataAccess;
-using IRepository;
+using DAL;
+using DAL.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 

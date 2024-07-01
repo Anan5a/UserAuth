@@ -1,8 +1,8 @@
-﻿using IRepository;
+﻿using DAL.IRepository;
 using Microsoft.Data.SqlClient;
 
 
-namespace DataAccess
+namespace DAL
 {
     public class Repository<T> : IRepository<T> where T : class
     {

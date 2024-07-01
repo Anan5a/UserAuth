@@ -1,10 +1,10 @@
-﻿using IRepository;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using BE;
 using System.Data;
 using System.Text;
+using DAL.IRepository;
 
-namespace DataAccess
+namespace DAL
 {
     public class UserRepository : Repository<User>, IUserRepository
     {

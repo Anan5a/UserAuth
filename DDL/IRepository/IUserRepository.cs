@@ -1,6 +1,6 @@
 ﻿using BE;
 
-namespace IRepository
+namespace DAL.IRepository
 {
     public interface IUserRepository : IRepository<User>
     {

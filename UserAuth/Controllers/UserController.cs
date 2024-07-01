@@ -16,6 +16,8 @@ namespace UserAuth.Controllers
         private readonly HttpClientHelper _httpClientHelper;
         private readonly string _apiUrl;
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public UserController(IConfiguration configuration, HttpClientHelper httpClientHelper)
         {
             _configuration = configuration;
@@ -43,8 +45,12 @@ namespace UserAuth.Controllers
             form["Name"] = newUser.Name;
             form["Password"] = newUser.Password;
 
+            Logger.Info("API request data for signup: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(form));
+            
             ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Signup", form);
-
+            
+            Logger.Info("API response for signup: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            
             if (result.Code == 200)
             {
                 //signup ok, show user success page,
@@ -80,9 +86,11 @@ namespace UserAuth.Controllers
             form["Email"] = loginDto.Email;
             form["Password"] = loginDto.Password;
 
+            Logger.Info("API request data for login: ", Newtonsoft.Json.JsonConvert.SerializeObject(form));
 
 
             ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Login", form);
+            Logger.Info("API response for login: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
             if (result.Code != 200)
             {
@@ -134,7 +142,10 @@ namespace UserAuth.Controllers
             long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
             //log
             //call api
+            Logger.Info("API request data for account id: {0}", userId);
+
             ApiResponseDto result = await _httpClientHelper.GetAsync<ApiResponseDto>(_apiUrl + $"/api/Account/{userId}");
+            Logger.Info("API response for account id: {0}|{1}", userId, Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
             if (result.Code != 200)
             {

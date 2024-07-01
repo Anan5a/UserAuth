@@ -1,5 +1,5 @@
 ﻿
-namespace IRepository
+namespace DAL.IRepository
 {
     public interface IRepository<T> where T : class
     {

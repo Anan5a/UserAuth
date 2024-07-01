@@ -1,20 +1,18 @@
 ﻿using BE.DTOs;
-using IRepository;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+using DAL.IRepository;
 using UserAuth.Utility;
 using BE;
+using Newtonsoft.Json;
 
 namespace BLL
 {
     public static class UserBLL
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static bool CreateUser(string connectionString, UserSignupDto newUser, IUserRepository _userRepository)
         {
-
+            Logger.Info("Add new user to database: {0}", JsonConvert.SerializeObject(newUser));
             BE.User user = new BE.User
             {
                 Name = newUser.Name,
@@ -33,6 +31,7 @@ namespace BLL
         }
         public static dynamic LoginUser(string connectionString, UserLoginDto loginDto, IUserRepository _userRepository)
         {
+            Logger.Info("Login user info: {0}", JsonConvert.SerializeObject(loginDto));
 
             Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
             condition["Email"] = loginDto.Email;
@@ -59,6 +58,8 @@ namespace BLL
             condition["Id"] = userId;
 
             User? existingUser = _userRepository.Get(connectionString,condition, includeProperties: "true");
+            Logger.Info("Account info fro ID: {0}, {1}",userId, JsonConvert.SerializeObject(existingUser));
+
             if (existingUser == null)
             {
                 return null;
