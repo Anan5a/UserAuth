@@ -1,7 +1,4 @@
 ﻿using API.Utility;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 
 namespace API.Middleware
 {
@@ -26,6 +23,7 @@ namespace API.Middleware
             if (string.IsNullOrEmpty(token))
             {
                 Logger.Info("No access token used for access");
+                Logger.Info("Terminating request");
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 httpContext.Response.WriteAsync("Unauthorized request. Invalid token. Access to this resource is forbidden.");
                 return Task.CompletedTask;
@@ -33,8 +31,8 @@ namespace API.Middleware
 
             if (!string.IsNullOrEmpty(ConfigHelper.GetAPIKey(_config)) && !ConfigHelper.GetAPIKey(_config).Equals(token))
             {
-                Logger.Info("Invalid access token used for access: {0}", token);
-
+                Logger.Debug("Invalid access token used for access: {0}", token);
+                Logger.Info("Terminating request");
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 httpContext.Response.WriteAsync("Unauthorized request. Invalid token. Access to this resource is forbidden.");
                 return Task.CompletedTask;

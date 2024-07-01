@@ -23,17 +23,22 @@ namespace API.Controllers
         [Route("Signup")]
         public IActionResult Signup([FromForm] UserSignupDto newUser)
         {
-            Logger.Info("Signup request got data: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(newUser));
+            Logger.Debug("Starting ApiController::Signup with param:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(newUser));
             bool createUserStatus = BLL.UserBLL.CreateUser(_connectionString, newUser, _userRepository);
 
             if (createUserStatus)
             {
+                Logger.Info("Return Ok");
+                Logger.Info("End ApiController::Signup");
                 return Ok(new ApiResponseDto
                 {
-                    Code=200,
-                    Message="Success",
+                    Code = 200,
+                    Message = "Success",
                 });
             }
+            Logger.Info("Return Error");
+            Logger.Info("End ApiController::Signup");
+
             return Ok(new ApiResponseDto
             {
                 Code = 100,
@@ -44,11 +49,14 @@ namespace API.Controllers
         [Route("Login")]
         public IActionResult Login([FromForm] UserLoginDto loginDto)
         {
-            Logger.Info("Login request got data: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(loginDto));
+            Logger.Debug("Start ApiController::Login with param:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(loginDto));
 
             var loginUser = BLL.UserBLL.LoginUser(_connectionString, loginDto, _userRepository);
-            if (loginUser == null) 
+            if (loginUser == null)
             {
+                Logger.Info("Return Error");
+                Logger.Info("End ApiController::Login");
+
                 return Ok(new ApiResponseDto
                 {
                     Code = 100,
@@ -57,36 +65,46 @@ namespace API.Controllers
             }
             if (loginUser is false)
             {
+                Logger.Info("Return Error");
+                Logger.Info("End ApiController::Login");
+
                 return Ok(new ApiResponseDto
                 {
                     Code = 100,
                     Message = "Invalid user or password.",
                 });
             }
+            Logger.Info("Return Ok");
+            Logger.Info("End ApiController::Login");
 
             return Ok(new ApiResponseDto
             {
                 Code = 200,
                 Message = "Success",
-                User= loginUser as BE.User
+                User = loginUser as BE.User
             });
 
         }
 
         [Route("Account/{userId}")]
-         public IActionResult Account(long userId)
+        public IActionResult Account(long userId)
         {
-            Logger.Info("Account request got ID: {0}", userId);
+            Logger.Debug("Start ApiController::Account with userId: {0}", userId);
 
             var userAccount = BLL.UserBLL.AccountInfo(_connectionString, _userRepository, userId);
             if (userAccount == null)
             {
+                Logger.Info("Return Error");
+                Logger.Info("End ApiController::Account");
+
                 return Ok(new ApiResponseDto
                 {
                     Code = 100,
                     Message = "No user found.",
                 });
             }
+            Logger.Info("Return Ok");
+            Logger.Info("End ApiController::Login");
 
             return Ok(new ApiResponseDto
             {

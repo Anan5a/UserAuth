@@ -3,24 +3,30 @@ using BE;
 using System.Data;
 using System.Text;
 using DAL.IRepository;
+using Newtonsoft.Json;
 
 namespace DAL
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
         private readonly string tableName = "Users";
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
 
         public int Remove(string connectionString, int Id)
         {
+            Logger.Debug("Removing data with id:{0}", Id);
             return base.Remove(connectionString, tableName, "Id", Id);
         }
         public int RemoveRange(string connectionString, List<int> Ids)
         {
+            Logger.Debug("Removing data with ids:{0}", Ids.ToString());
+
             return base.RemoveRange(connectionString, tableName, "Id", Ids);
         }
         public new int Add(string connectionString, User user)
         {
+            Logger.Debug("Starting UserRepository::Add with param:{0}", JsonConvert.SerializeObject(user));
 
             try
             {
@@ -37,6 +43,8 @@ namespace DAL
                         command.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
                         command.Parameters.AddWithValue("@ModifiedAt", user.ModifiedAt);
                         int insertedUserId = Convert.ToInt32(command.ExecuteScalar());
+                        Logger.Debug("Added user, entry id:{0}", insertedUserId);
+                        Logger.Info("End UserRepository::Add");
                         return insertedUserId;
                     }
                 }
@@ -44,6 +52,9 @@ namespace DAL
             }
             catch (Exception ex)
             {
+                Logger.Info("Add user failed");
+
+                Logger.Info("End UserRepository::Add");
                 return 0;
             }
 
@@ -53,6 +64,8 @@ namespace DAL
 
         public new IEnumerable<User> GetAll(string connectionString, Dictionary<string, dynamic>? condition = null, string? includeProperties = "true")
         {
+            Logger.Debug("Starting UserRepository::GetAll with param:{0}", JsonConvert.SerializeObject(condition?.ToArray()));
+
             List<User> users = new List<User>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -111,11 +124,16 @@ namespace DAL
                     }
                 }
             }
+
+            Logger.Info("End UserRepository::GetAll");
+
             return users;
         }
 
         public new User? Get(string connectionString, Dictionary<string, dynamic> condition, string? includeProperties)
         {
+            Logger.Debug("Starting UserRepository::Get with param:{0}", JsonConvert.SerializeObject(condition?.ToArray()));
+
             User? user = null;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -165,11 +183,15 @@ namespace DAL
                     }
                 }
             }
+            Logger.Info("End UserRepository::Get");
+
             return user;
         }
 
         public new User? Update(string connectionString, User existingUser)
         {
+            Logger.Debug("Starting UserRepository::Update with param:{0}", JsonConvert.SerializeObject(existingUser));
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -188,11 +210,15 @@ namespace DAL
 
                     if (rowsAffected == 0)
                     {
+                        Logger.Info("No data changed");
+                        Logger.Info("End UserRepository::Update");
+
                         // If no rows were affected, the update operation failed
                         return null;
                     }
                 }
             }
+            Logger.Info("End UserRepository::Update");
 
             return existingUser;
         }

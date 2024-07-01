@@ -6,7 +6,6 @@ using System.Security.Claims;
 using BE.DTOs;
 using BE;
 using UserAuth.Utility;
-using Microsoft.SqlServer.Server;
 
 namespace UserAuth.Controllers
 {
@@ -27,6 +26,7 @@ namespace UserAuth.Controllers
 
         public IActionResult Signup()
         {
+            Logger.Info("Return signup view");
             return View();
         }
 
@@ -34,6 +34,7 @@ namespace UserAuth.Controllers
         [HttpPost]
         public async Task<IActionResult> Signup([FromForm] UserSignupDto newUser)
         {
+            Logger.Debug("Starting UserController::Signup with param:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(newUser));
             if (!ModelState.IsValid)
             {
                 return View("Signup", newUser);
@@ -45,39 +46,46 @@ namespace UserAuth.Controllers
             form["Name"] = newUser.Name;
             form["Password"] = newUser.Password;
 
-            Logger.Info("API request data for signup: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(form));
-            
             ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Signup", form);
             
-            Logger.Info("API response for signup: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            Logger.Debug("API response for signup:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
             
             if (result.Code == 200)
             {
                 //signup ok, show user success page,
                 ViewBag.SignupOk = true;
+                Logger.Info("Signup Ok, Returning view");
                 return View();
             }
 
 
             ModelState.AddModelError("", "User creation failed. Something catastrophically went wrong!");
+            Logger.Info("Signup Error, Returning view with error");
+            Logger.Info("End UserController::Signup");
             return View("Signup", newUser);
 
         }
 
         public IActionResult Login()
         {
+            Logger.Info("Starting UserController::Login view");
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
+                Logger.Info("Already logged in, Redirect to account page");
                 return RedirectToAction("Account", "User");
             }
+            Logger.Info("Return login form");
+            Logger.Info("End UserController::Login");
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] UserLoginDto loginDto)
         {
+            Logger.Debug("Starting UserController::Login with param:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(loginDto));
             if (!ModelState.IsValid)
             {
+                Logger.Info("Model validation error. Returning errors");
                 return View(loginDto);
             }
             //log
@@ -86,16 +94,15 @@ namespace UserAuth.Controllers
             form["Email"] = loginDto.Email;
             form["Password"] = loginDto.Password;
 
-            Logger.Info("API request data for login: ", Newtonsoft.Json.JsonConvert.SerializeObject(form));
-
-
             ApiResponseDto result = await _httpClientHelper.PostAsync<ApiResponseDto>(_apiUrl + "/api/Login", form);
-            Logger.Info("API response for login: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            Logger.Debug("API response for login:{0}", Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
             if (result.Code != 200)
             {
                 //signup ok, show user success page,
                 ModelState.AddModelError("", result.Message);
+                Logger.Info("Error from API,{0}", result.Message);
+                Logger.Info("End UserController::Login");
                 return View(loginDto);
             }
 
@@ -118,6 +125,8 @@ namespace UserAuth.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties).Wait();
+            Logger.Info("Login Ok, Redirecting user");
+            Logger.Info("End UserController::Login");
 
             return RedirectToAction("Account", "User");
 
@@ -126,30 +135,43 @@ namespace UserAuth.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
+            Logger.Info("Start UserController::Logout");
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
                 ViewBag.SuccessMessage = "Logout successful!";
+                Logger.Info("Logout Ok");
+                Logger.Info("End UserController::Logout");
+
                 return RedirectToAction("Index", "Home");
             }
             //otherwise nothing to do :-}
+            Logger.Info("Not logged in. Redirecting to /");
+
+            Logger.Info("End UserController::Logout");
+
             return Redirect("/");
         }
 
         [Authorize]
         public async Task<IActionResult> Account()
         {
+            Logger.Info("Start UserController::Account");
+
             long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
             //log
             //call api
-            Logger.Info("API request data for account id: {0}", userId);
+            Logger.Info("Requesting data for account id: {0}", userId);
 
             ApiResponseDto result = await _httpClientHelper.GetAsync<ApiResponseDto>(_apiUrl + $"/api/Account/{userId}");
-            Logger.Info("API response for account id: {0}|{1}", userId, Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            Logger.Info("API response for account id:{0}:{1}", userId, Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
             if (result.Code != 200)
             {
                 //signup ok, show user success page,
+                Logger.Info("Api returned error");
+                Logger.Info("End UserController::Account");
+
                 return Redirect("/Home/Error");
             }
             User existingUser = result.User;
@@ -161,6 +183,9 @@ namespace UserAuth.Controllers
                 CreatedAt = existingUser.CreatedAt,
                 ModifiedAt = existingUser.ModifiedAt,
             };
+            Logger.Info("Return account view");
+            Logger.Info("End UserController::Account");
+
             return View(accountViewModel);
         }
 

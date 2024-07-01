@@ -12,7 +12,7 @@ namespace BLL
 
         public static bool CreateUser(string connectionString, UserSignupDto newUser, IUserRepository _userRepository)
         {
-            Logger.Info("Add new user to database: {0}", JsonConvert.SerializeObject(newUser));
+            Logger.Debug("Starting UserBLL::CreateUser with params:user:{0}", JsonConvert.SerializeObject(newUser));
             BE.User user = new BE.User
             {
                 Name = newUser.Name,
@@ -25,13 +25,19 @@ namespace BLL
 
             if (id == 0)
             {
+                Logger.Info("User creation failed");
+                Logger.Info("End UserBLL::CreateUser");
+
                 return false;
             }
+            Logger.Info("User creation successful");
+            Logger.Info("End UserBLL::CreateUser");
+
             return true;
         }
         public static dynamic LoginUser(string connectionString, UserLoginDto loginDto, IUserRepository _userRepository)
         {
-            Logger.Info("Login user info: {0}", JsonConvert.SerializeObject(loginDto));
+            Logger.Debug("Starting UserBLL::LoginUser with params:user:{0}", JsonConvert.SerializeObject(loginDto));
 
             Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
             condition["Email"] = loginDto.Email;
@@ -39,14 +45,22 @@ namespace BLL
             BE.User? existingUser = _userRepository.Get(connectionString, condition, includeProperties: "true");
             if (existingUser == null)
             {
+                Logger.Info("Login failed");
+                Logger.Info("End UserBLL::LoginUser");
+
                 return null;
             }
             if (!PasswordManager.VerifyPassword(loginDto.Password, existingUser.Password))
             {
+                Logger.Info("Login failed");
+                Logger.Info("End UserBLL::LoginUser");
+
                 return false;
             }
             //valid user
 
+            Logger.Info("Login successful");
+            Logger.Info("End UserBLL::LoginUser");
 
             return existingUser;
 
@@ -54,17 +68,22 @@ namespace BLL
 
         public static User AccountInfo(string connectionString, IUserRepository _userRepository, long userId)
         {
+            Logger.Debug("Starting UserBLL::AccountInfo with params:userId:{0}", userId);
+
             Dictionary<string, dynamic> condition = new Dictionary<string, dynamic>();
             condition["Id"] = userId;
 
             User? existingUser = _userRepository.Get(connectionString,condition, includeProperties: "true");
-            Logger.Info("Account info fro ID: {0}, {1}",userId, JsonConvert.SerializeObject(existingUser));
-
             if (existingUser == null)
             {
+                Logger.Info("No user account found");
+                Logger.Info("End UserBLL::AccountInfo");
+
                 return null;
             }
-            
+            Logger.Info("Login successful");
+            Logger.Info("End UserBLL::AccountInfo");
+
             return existingUser;
         }
     }
