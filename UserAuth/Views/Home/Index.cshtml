@@ -2,18 +2,90 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Welcome to Awesome website</h1>
+                <p class="lead">We build software to code, design, application management, troubleshooting and security threats, and providing end user support and maintenance. We are specialized in improving the application development process and continuously find ways to advance applications.</p>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Account" asp-controller="User" class="btn btn-primary btn-md">My Profile</a>
+                }
+                else
+                {
+                    <div>
+                        <a asp-action="Signup" asp-controller="User" class="btn btn-primary btn-md">Register Now</a><br /> OR<br />
+                        @*<p class="text-muted">Already a user?</p>*@
+                        <h4><a asp-action="Login" asp-controller="User" class="text-decoration-underline text-white">Sign In</a></h4>
+                    </div>
+
+
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Features Section -->
+<section class="features-section pt-5 pb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="feature-item">
+                    <i class="fa fa-cogs fa-4x mb-4"></i>
+                    <h3>Application Development</h3>
+                    <p class="align-start">RandomAccess provides sophisticated, customized application development solutions to help businesses solve problems, meet...</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-item">
+                    <i class="fa fa-users fa-4x mb-4"></i>
+                    <h3>Mobile Application</h3>
+                    <p class="align-start">Inspection is our android and iOS based application for construction, repair or any other kind of inspection purpose ...</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-item">
+                    <i class="fa fa-globe fa-4x mb-4"></i>
+                    <h3>Implementation And Configuration</h3>
+                    <p class="align-start">We design and maintain standard front-end and back-end websites so that our customers can have seamless experiences ...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+@*
 <div class="container text-center mt-5">
     <h1>Welcome to Awesome website</h1>
-    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p class="lead">
+        We build software to code, design, application management, troubleshooting and security threats, and providing end user support and maintenance. We are specialized in improving the application development process and continuously find ways to advance applications.
+    </p>
     <p>Let's get started</p>
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
-        <a  asp-action="Account" asp-controller="User" class="btn btn-primary btn-lg">Dashboard</a>
+        <a asp-action="Account" asp-controller="User" class="btn btn-primary btn-md">Dashboard</a>
     }
     else
     {
-        <a asp-action="Signup" asp-controller="User" class="btn btn-primary btn-lg">Register Now</a>
+        <a asp-action="Signup" asp-controller="User" class="btn btn-primary btn-md">Register Now</a>
+        <p class="text-muted">Already a user?</p>
+        <a asp-action="Login" asp-controller="User" class="text-decoration-underline">Sign In</a>
 
     }
 
 </div>
+}
+*@

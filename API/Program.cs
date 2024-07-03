@@ -1,4 +1,5 @@
 using API.Middleware;
+using BLL.Services;
 using DAL;
 using DAL.IRepository;
 
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
+builder.Services.AddSingleton<EmailService>();
 
 var app = builder.Build();
 

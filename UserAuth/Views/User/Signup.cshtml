@@ -6,13 +6,13 @@
 
 <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12 mx-auto">
     <div class="card">
-        <h5 class="card-header text-center">Register new account</h5>
+        <h5 class="card-header text-center text-black">Register new account</h5>
         <div class="card-body">
             @if (ViewBag?.SignupOk != null)
             {
                 <div class="container text-center mt-5">
-                    <h4>Your account was created successfully. You can login now.</h4>
-                        <a asp-action="Login" asp-controller="User" class="btn btn-success btn-lg">Login</a>
+                    <p class="text-black">Your account was created successfully. You can login now.</p>
+                        <a asp-action="Login" asp-controller="User" class="text-decoration-underline">Login</a>
                 </div>
             }
             else
@@ -35,8 +35,10 @@
                         <input type="password" class="form-control" asp-for="Password">
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Signup</button>
+                    <div class="col-12 clearfix">
+                        <a asp-controller="User" asp-action="Login" class="float-start text-decoration-underline">I already have an account.</a>
+
+                        <button type="submit" class="btn btn-primary float-end">Signup</button>
                     </div>
                 </form>
             }

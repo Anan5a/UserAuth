@@ -6,7 +6,7 @@
 
 <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12 mx-auto">
     <div class="card">
-        <h5 class="card-header text-center">Login</h5>
+        <h5 class="card-header text-center text-black">Login</h5>
         <div class="card-body">
             <form asp-controller="User" asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -21,8 +21,9 @@
                     <input type="password" class="form-control" asp-for="Password">
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Login</button>
+                <div class="col-12 clearfix">
+                    <a asp-controller="User" asp-action="ForgotPassword" class="float-start text-decoration-underline">I forgot my password</a>
+                    <button type="submit" class="btn btn-primary float-end">Login</button>
                 </div>
 
             </form>

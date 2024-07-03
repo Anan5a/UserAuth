@@ -197,12 +197,39 @@ namespace DAL
                 connection.Open();
 
                 // Execute the SQL update command to update the user record in the database
-                string query = $"UPDATE [{tableName}] SET [Name] = @Name, [Email] = @Email, [Password] = @Password, [ModifiedAt] = @ModifiedAt WHERE [Id] = @Id";
+                string query = $"UPDATE [{tableName}] SET ";
+
+                if (existingUser.Name != null)
+                {
+                    query += "[Name] = @Name,";
+                }
+                if (existingUser.Email != null)
+                {
+                    query += "[Email] = @Email,";
+                }
+                if (existingUser.Password != null)
+                {
+                    query += "[Password] = @Password,";
+                }
+                query += "[ModifiedAt] = @ModifiedAt WHERE [Id] = @Id";
+
+
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Name", existingUser.Name);
-                    command.Parameters.AddWithValue("@Email", existingUser.Email);
-                    command.Parameters.AddWithValue("@Password", existingUser.Password);
+                    if (existingUser.Name!=null)
+                    {
+                        command.Parameters.AddWithValue("@Name", existingUser.Name);
+                    }
+                    if (existingUser.Password != null)
+                    {
+                        command.Parameters.AddWithValue("@Password", existingUser.Password);
+
+                    }
+                    if (existingUser.Email!=null)
+                    {
+                        command.Parameters.AddWithValue("@Email", existingUser.Email);
+
+                    }
                     command.Parameters.AddWithValue("@ModifiedAt", existingUser.ModifiedAt);
                     command.Parameters.AddWithValue("@Id", existingUser.Id);
 
