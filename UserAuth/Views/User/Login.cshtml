@@ -16,9 +16,12 @@
                     <input type="text" class="form-control" asp-for="Email">
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 ">
                     <label asp-for="Password" class="form-label"></label>
-                    <input type="password" class="form-control" asp-for="Password">
+                    <div class="position-relative">
+                        <input type="password" class="form-control password" asp-for="Password">
+                        <i class="fa fa-eye-slash position-absolute eye-password" aria-hidden="true"></i>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="col-12 clearfix">

@@ -22,15 +22,15 @@ body {
     background-image: url('/site-bg.jpg');
     background-size: cover;
     background-position: center;
-    color:white;
-   
+    color: white;
 }
-input{
-    color:black;
+
+input {
+    color: black;
 }
 
 .hero-section {
-/*    background-image: url('/background.jpg');
+    /*    background-image: url('/background.jpg');
     background-size: cover;
     background-position: center;*/
     color: #fff;
@@ -38,15 +38,15 @@ input{
     text-align: center;
 }
 
-.hero-section h1 {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
-}
+    .hero-section h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+    }
 
-.hero-section p {
-    font-size: 1.5rem;
-    margin-bottom: 40px;
-}
+    .hero-section p {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+    }
 
 .feature-item {
     text-align: center;
@@ -54,37 +54,52 @@ input{
     margin-bottom: 30px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    background:white;
-    color:black;
+    background: white;
+    color: black;
 }
 
-.feature-item i {
-    font-size: 3rem;
-    color: #007bff;
-    margin-bottom: 20px;
-}
+    .feature-item i {
+        font-size: 3rem;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
 
-.feature-item h3 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    text-align:left;
-}
+    .feature-item h3 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        text-align: left;
+    }
 
-.feature-item p {
-    font-size: 1rem;
-    text-align:left;
-}
+    .feature-item p {
+        font-size: 1rem;
+        text-align: left;
+    }
 
 .footer {
     background-color: #333;
     color: #fff;
     text-align: center;
-
-/*    padding: 30px 0;*/
+    /*    padding: 30px 0;*/
 }
 
-form{
-    background:white;
-    border-radius:0.4rem;
-    color:black;
+form {
+    background: white;
+    border-radius: 0.4rem;
+    color: black;
 }
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.eye-password {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
