@@ -23,7 +23,8 @@ namespace BLL.Services
             {
                 smtpClient.Port = int.Parse(_configuration["EmailService:Port"]);
                 smtpClient.Credentials = new NetworkCredential(_configuration["EmailService:UserName"], _configuration["EmailService:Password"]);
-                smtpClient.EnableSsl = false;
+                smtpClient.EnableSsl = true;
+                
 
                 using (MailMessage mailMessage = new MailMessage())
                 {
